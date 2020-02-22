@@ -98,8 +98,8 @@ while true do
 
 
 			-- What tested before
-			-- input['P1 Start'] = true				-- Works for P1 inputs
-			-- input['P2 B'] = true 				-- Doesnt work dummy != P2
+			-- input['P1 Start'] = true				-- Works for P1 inputs. Needs joypad.set(input) to work.
+			-- input['P2 B'] = true 				-- Doesn't work cause dummy buttons != P2 buttons
 			-- memory.writebyte(P2ButtonsAddr, 2)	-- same
 
 			P2State=memory.readbyte(P2StateAddr)
