@@ -1,7 +1,7 @@
 # Asuka 120 LimitOver - LUA Training mode
 LUA script to help training more efficiently & understand more the game.
 
-If you want to talk, share ideas etc: I advise joining the [Asuka 120% Discord](https://discordapp.com/invite/K4WyTCC), and go in the ddicated #programming-club channel.
+If you want to talk, share ideas etc: I advise joining the [Asuka 120% Discord](https://discordapp.com/invite/K4WyTCC), and go in the dedicated #programming-club channel.
 
 
 
