@@ -2,7 +2,7 @@
 LUA script made
 
 ## What's in the training mode right now:
-![Bizhawk screenshot of A120LO Lua 1.0](https://media.discordapp.net/attachments/606287985801166878/615225027910041611/EmuHawk_2019-08-24_21.58.08.png)
+![Bizhawk screenshot of A120LO Lua 1.0](https://media.discordapp.net/attachments/606287985801166878/615225027910041611/EmuHawk_2019-08-24_21.58.08.png){:height="50%" width="50%"}
 - combo counter in real time (number of hits in your last combo)
 - Damage output (last damage)
 - Stun / foe's stamina - timer until stun goes back to 0
