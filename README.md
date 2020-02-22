@@ -28,7 +28,7 @@ Disclaimer: When you start the training mode, damage is at -1, it will go to zer
 ## 🔁 FUTURE UPDATE / IDEAS
 Here's some ideas I have for how we could improve the .lua:
 
-Color code:  
+**Color code:**  
 ![#f5645d](https://placehold.it/15/f5645d/000000?text=+) → Would help tremendously — ![#f5cc5d](https://placehold.it/15/f5cc5d/000000?text=+) → Good Quality of life — ![#f0f55d](https://placehold.it/15/f0f55d/000000?text=+) → Not a high priority feature
 
 __Easy:__
