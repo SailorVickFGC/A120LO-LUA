@@ -18,38 +18,31 @@ local P2State
 local TimerAddr = 0x0903F2
 local Timer
 
-local AIButtonsAddr = 0x087356
-local AIButtons
 
-local P2ButtonsAddr = 0x087354
-local P2Buttons
+local AIButtonsAddr2 = 0x087356
+local AIButtons2
+-- local AIStickAddr2 = 0x087350
+-- local AIStick2
+
+local AIButtonsAddr = 0x087354
+local AIButtons
 local AIa = 1
 local AIb = 2
 local AIc = 8	-- != A+B -> 1+2
 local AIx = 4
 local AIy = 16
 local AIz = 32
--- R 64
--- L 128
+-- R 64, L 128
 -- Buttons combination equal the result of their addition: eg A+C=9 or C+Z=40
 
-local AIStickAddr = 0x087350
+local P1StickAddr = 0x086D00
+local AIStickAddr = 0x087350 -- P2 stick but also Dummy? 🤔 Can't find a second AI stick
 local AIStick
--- 8 ↑
--- 9 ↗
--- 6 →
--- 3 ↘
--- 2 ↓
--- 1 ↙
--- 4 ←
--- 7 ↖
--- 0 •
+-- 8 ↑, 9 ↗, 6 →, 3 ↘, 2 ↓, 1 ↙, 4 ←, 7 ↖, 0 •
 
 local AISideAddr = 0x0872C4
 local AISide
--- 0 = P1
--- 1 = P2
--- Which side it looks iirc.
+-- 0 = P1, 1 = P2
 
 local ComboAddr = 0x0873FC
 local Combo
@@ -60,16 +53,6 @@ local LastCombo
 
 --- CODE ---
 while true do
--- Infinite life
-		--> take Damage
-		--> stay like that for 200-500ms
-		--> refill life
-
--- transform VS mode into Training Mode
-	-- Timer=memory.readbyte(TimerAddr)
-	-- memory.writebyte(TimerAddr, 88)
-	-- gui.text(10,200,"Timer: " .. Timer)
-
 -- Combo Counter
 	Combo=memory.readbyte(ComboAddr)
 	LastCombo=memory.readbyte(LastComboAddr)
@@ -106,14 +89,23 @@ while true do
 		gui.text(10,270, "P2 State: Idle") 
 	end
 
+-- /// If thrown = tech
+	if P2State==8 then  -- 0 hit, 8 thrown / clash / hitting
+		repeat
+			gui.text(10,180,"Throw tech")			-- erase everything but mokay
+			memory.writebyte(AIButtonsAddr2, 2)		-- Works fine
+			memory.writebyte(AIStickAddr, 2)		-- Doesn't work cause... ¯\_(ツ)_/¯
+
+
+			-- What tested before
+			-- input['P1 Start'] = true				-- Works for P1 inputs
+			-- input['P2 B'] = true 				-- Doesnt work dummy != P2
+			-- memory.writebyte(P2ButtonsAddr, 2)	-- same
+
+			P2State=memory.readbyte(P2StateAddr)
+			emu.frameadvance() 
+		until (P2State==15) -- return to Idle
+	end
+
 	emu.frameadvance()
 end
-
-
---- CREDITs
--- Sprint (help to get started, did the SMS hitboxes viewer)
--- 
--- From TASVideo discord: (early help with LUA)
--- Arcorann 
--- Mothrayas
--- Xander
