@@ -3,6 +3,8 @@ LUA script to help training more efficiently & understand more the game.
 
 If you want to talk, share ideas etc: I advise joining the [Asuka 120% Discord](https://discordapp.com/invite/K4WyTCC), and go in the dedicated #programming-club channel.
 
+You can contact me on discord, Vick#9262, or on twitter ![@thesailorvick](https://twitter.com/TheSailorVick).
+
 
 
 ## 🔰 How to use this .lua script
