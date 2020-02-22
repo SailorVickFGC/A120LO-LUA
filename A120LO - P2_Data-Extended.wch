@@ -1,0 +1,16 @@
+SystemID SAT
+0903F2	b	u	1	Work Ram High	Timer
+0	S	_	1		
+0875C4	b	u	1	Work Ram High	2P Life
+087342	b	u	1	Work Ram High	2P Stun
+0875CC	b	u	1	Work Ram High	2P Meter
+0	S	_	1		
+0872C4	b	u	1	Work Ram High	AI side — P1=0, P2=1
+087350	b	u	1	Work Ram High	P2 Stick (+ AI?)
+087354	b	u	1	Work Ram High	P2 Buttons
+087356	b	u	1	Work Ram High	AI Buttons
+0	S	_	1		
+083D9A	b	u	1	Work Ram High	P1 Stand / crouch / jump ?
+086D00	b	u	1	Work Ram High	P1 Stick
+086CC2	b	u	1	Work Ram High	P1 Pressing down?
+

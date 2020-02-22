@@ -1,0 +1,71 @@
+SystemID SAT
+0	S	_	1		GENERAL
+0903F2	b	u	1	Work Ram High	Timer
+086DAE	b	u	1	Work Ram High	Combo Counter - Another RT one?
+086E12	b	u	1	Work Ram High	Combo Counter - Last combo
+0873FC	b	u	1	Work Ram High	Combo Counter - Real time from 1
+0FFB82	b	u	1	Work Ram High	Menu
+07CB22	b	u	1	Work Ram High	Stages or Background
+07C9B6	b	u	1	Work Ram High	Select Screen - mode
+0945B5	b	u	1	Work Ram High	Select Screen - mode bis
+0E4F59	b	u	1	Work Ram High	Game Pause - 01b
+0E9A42	b	u	1	Work Ram High	Game Pause - 01c
+07984A	b	u	1	Work Ram High	Game Pause - P1?
+0	S	_	1		PLAYER 1
+086F84	b	u	1	Work Ram High	P1 get hit? 1clash - 4 recovery? - 5 hit
+086F74	b	u	1	Work Ram High	P1 Life
+086F76	b	u	1	Work Ram High	P1 Red Life
+086F7C	b	u	1	Work Ram High	P1 Meter
+086CF2	b	u	1	Work Ram High	P1 Stun
+086CF8	b	u	1	Work Ram High	P1 Stun Limit
+086CF4	b	u	1	Work Ram High	P1 Stun - Timer
+086C74	b	u	1	Work Ram High	P1 side
+086D00	b	u	1	Work Ram High	P1 Stick
+086D04	b	u	1	Work Ram High	P1 Buttons
+086D06	b	u	1	Work Ram High	P1 Buttons bis?
+0	S	_	1		P1 MISC.
+086F6E	b	u	1	Work Ram High	P1 — 1=Jump Cancellable 0=no , also 1 HJ only?
+086D73	b	u	1	Work Ram High	P1 Walk/Dash - direction
+086D72	b	u	1	Work Ram High	P1 X speed?
+086D82	b	u	1	Work Ram High	P1 Y Speed?
+086EBA	b	u	1	Work Ram High	P1— to there or more (Wtf did I meant by that...)
+086EB6	b	u	1	Work Ram High	P1-height camera? from there
+0	S	_	1		PLAYER 2
+0875C4	b	u	1	Work Ram High	P2 Life
+0875C6	b	u	1	Work Ram High	P2 Red Life
+0875CC	b	u	1	Work Ram High	P2 Meter
+087342	b	u	1	Work Ram High	P2 Stun
+087348	b	u	1	Work Ram High	P2 Stun Limit
+087344	b	u	1	Work Ram High	P2 Stun - Timer
+087350	b	u	1	Work Ram High	P2 Stick (+AI)
+087354	b	u	1	Work Ram High	P2 Buttons (+AI)
+087356	b	u	1	Work Ram High	P2 Buttons bis (+AI)
+0872C4	b	u	1	Work Ram High	P2 Side(+AI)
+083EB0	b	u	1	Work Ram High	P2 State?
+0873C4	b	u	1	Work Ram High	P2ai - Y speed / pos?
+0873C5	b	u	1	Work Ram High	P2ai - Y speed / pos? bis
+0872C2	b	u	1	Work Ram High	P2 !!! State / any animation  18/tech?
+0	S	_	1		P2/AI?
+0873E3	b	u	1	Work Ram High	AI - Can be Juggle or not also can't jump or crouch. Apply end of above
+0873E2	b	u	1	Work Ram High	AI - Hitstun + State?
+0875BE	b	u	1	Work Ram High	AI - State?
+0873DE	b	u	1	Work Ram High	AI - X Speed (P2)
+0	S	_	1		¯\_(ツ)_/¯
+0873AA	b	u	1	Work Ram High	P2 X pos on stage, also 0873B6
+0873AE	b	u	1	Work Ram High	P2 Y Pos?
+08755E	b	u	1	Work Ram High	P2 3 whiff, 2 hit
+0873D2	b	u	1	Work Ram High	P2 fall speed?
+087506	b	u	1	Work Ram High	P2 - height camera? from there
+0873C0	b	u	1	Work Ram High	P2 - X speed? 1
+0873C1	b	u	1	Work Ram High	P2 - X speed? 2
+0873C3	b	u	1	Work Ram High	P2 - X speed? 3
+086D71	b	u	1	Work Ram High	P1 - Left / Right ?
+086D6A	b	u	1	Work Ram High	P1 - X hieght ?
+086F86	b	u	1	Work Ram High	P1 5C=6 Super=4
+086D28	b	u	1	Work Ram High	P1 A button hits...?
+086D7E	b	u	1	Work Ram High	P1 get hit weird
+094479	b	u	1	Work Ram High	Karina DP active?
+086C66	b	u	1	Work Ram High	P1 Y pos?
+0FFB4D	b	u	1	Work Ram High	Screen Layout?
+0FFB4F	b	u	1	Work Ram High	Screen Layout?
+
