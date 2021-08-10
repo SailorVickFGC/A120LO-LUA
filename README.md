@@ -1,9 +1,9 @@
 # Asuka 120 LimitOver - LUA Training mode
 LUA script to help training more efficiently & understand more the game.
 
-If you want to talk, share ideas etc: I advise joining the [Asuka 120% Discord](https://discordapp.com/invite/K4WyTCC), and go in the dedicated #programming-club channel.
+If you want to talk, share ideas etc, please join the [Asuka 120% Discord](https://discordapp.com/invite/K4WyTCC), and go in the dedicated #wiki-dev channel.
 
-You can contact me on discord, Vick#9262, or on twitter [@thesailorvick](https://twitter.com/TheSailorVick).
+You can also contact me on discord, Vick#9262, or on twitter [@thesailorvick](https://twitter.com/TheSailorVick).
 
 
 
@@ -18,12 +18,13 @@ After loading the rom, just drag the lua file into BizHawk window or in the menu
 
 ## 📦 What's in the training mode right now:
 ![Bizhawk screenshot of A120LO Lua 1.0](https://media.discordapp.net/attachments/606287985801166878/615225027910041611/EmuHawk_2019-08-24_21.58.08.png?width=720&height=530)
+- Hibox Viewer!
 - Combo counter in real time (number of hits in your last combo)
 - Damage output (last combo damage)
 - Stun / foe's stamina - timer until stun reset
 - Training Dummy's state (WIP)
 
-Disclaimer: When you start the training mode, damage is at -1, it will go to zero once you hit the training dummy.
+> **Disclaimer**: When you start the training mode, damage is at -1, it will go to zero once you hit the training dummy.
 
 
 
@@ -31,18 +32,20 @@ Disclaimer: When you start the training mode, damage is at -1, it will go to zer
 Here's some ideas I have for how we could improve the .lua:
 
 **Color code:**  
-![#f5645d](https://placehold.it/15/f5645d/000000?text=+) → Would help tremendously — ![#f5cc5d](https://placehold.it/15/f5cc5d/000000?text=+) → Good Quality of life — ![#f0f55d](https://placehold.it/15/f0f55d/000000?text=+) → Not a high priority feature
+🔴 → Hard  |  🟡 → Intermediate  |  🟢 → Easy  |  🔵 → Unsure
 
-__Easy:__
-- ![#f0f55d](https://placehold.it/15/f0f55d/000000?text=+) Makes the game heal to max health, instead of "max health-1", 
-- ![#f0f55d](https://placehold.it/15/f0f55d/000000?text=+) Only show / start script once in Deku battle (training mode)
 
-__Intermediate:__ 
-- ![#f5645d](https://placehold.it/15/f5645d/000000?text=+) show when the opponent can tech (true vs fake combo),
-- ![#f5645d](https://placehold.it/15/f5645d/000000?text=+) a ground / wall / throw tech option for the dummy (I kinda have the code for it, but the dummy doesn't accept the inputs >.>),
-- ![#f5cc5d](https://placehold.it/15/f5cc5d/000000?text=+) show startup/recovery like Skullgirls would be pretty cool too. (frame data would be awesome in itself)
-- ![#f0f55d](https://placehold.it/15/f0f55d/000000?text=+) input history (with frame counter? Would make it easier to test the juggle systems limits)
-- ![#f0f55d](https://placehold.it/15/f0f55d/000000?text=+) Having macro to activate some script (activate enemy teching Wall or ground etc by example)
+**Important**
+1. 🟡 Show when the opponent can tech (true vs fake combo)
+1. 🔴 Ground / wall / throw tech option for the dummy (I kinda have the code for it, but the dummy doesn't accept the inputs >.>)
+1. 🟡 show startup/recovery like Skullgirls would be pretty cool too (frame data would be awesome in itself)
+1. 🔴 Somehow make the hitboxes white when invincible (eg. on Torami's j22 or when you hit the juggle system limit & drop out).
 
-__Freaking hard:__
-- ![#f5645d](https://placehold.it/15/f5645d/000000?text=+) hitbox viewer: it would help tremendously to understand the game but is the hardest to implement.
+**Good Quality of life**
+1. 🔵 Make the text scale with window (imo avoid textPixel)
+1. 🟢 Input history (with frame counter? Would make it easier to test the juggle systems limits)
+1. 🟢 Having macro to activate X part of the script (eg. activate enemy wall/ground teching)
+
+**Not a Priority**
+1. 🟢 Make the game heal to max health, instead of "max health1.1"
+1. 🟢 Only show / start script once in Deku battle (training mode)
