@@ -28,11 +28,9 @@ After loading the rom, just drag the lua file into BizHawk window or in the menu
 
 
 
-## 🔁 FUTURE UPDATE / IDEAS
-Here's some ideas I have for how we could improve the .lua:
-
+## 🔁 To DO & Ideas
 **Color code:**  
-🔴 → Hard  |  🟡 → Intermediate  |  🟢 → Easy  |  🔵 → Unsure
+🔴 Hard  |  🟡 Intermediate  |  🟢 Easy  |  🔵 Unsure
 
 
 **Important**
@@ -42,9 +40,9 @@ Here's some ideas I have for how we could improve the .lua:
 1. 🔴 Somehow make the hitboxes white when invincible (eg. on Torami's j22 or when you hit the juggle system limit & drop out).
 
 **Good Quality of life**
-1. 🔵 Make the text scale with window (imo avoid textPixel)
 1. 🟢 Input history (with frame counter? Would make it easier to test the juggle systems limits)
 1. 🟢 Having macro to activate X part of the script (eg. activate enemy wall/ground teching)
+1. 🔵 Make the text scale with window (imo avoid textPixel)
 
 **Not a Priority**
 1. 🟢 Make the game heal to max health, instead of "max health1.1"
