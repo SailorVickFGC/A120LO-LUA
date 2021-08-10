@@ -7,8 +7,8 @@ You can also contact me on discord, Vick#9262, or on twitter [@thesailorvick](ht
 
 
 
-## 🔰 How to use this .lua script
-I recommend using BizHawk, it's easy to use & pretty robust.  
+## 🔰 How to use it
+I recommend using BizHawk, it's easy to use & pretty robust _(I also only tested it in Bizhawk)_.  
 After loading the rom, just drag the lua file into BizHawk window or in the menu "Tools > LUA console" and open the file.
 
 - BizHawk: https://github.com/TASVideos/BizHawk/releases
@@ -16,7 +16,7 @@ After loading the rom, just drag the lua file into BizHawk window or in the menu
 
 
 
-## 📦 What's in the training mode right now:
+## 📦 The Features
 ![Bizhawk screenshot of A120LO Lua 1.0](https://media.discordapp.net/attachments/606287985801166878/615225027910041611/EmuHawk_2019-08-24_21.58.08.png?width=720&height=530)
 - Hibox Viewer!
 - Combo counter in real time (number of hits in your last combo)
