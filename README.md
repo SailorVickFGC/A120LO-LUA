@@ -14,6 +14,7 @@ After loading the rom, just drag the lua file into BizHawk window and voilà!
 
 
 ## 📦 The Features
+The new 2.0 version has all these feature:
 - Hitbox Viewer!
 - Auto-tech on:
   - Ground splat
