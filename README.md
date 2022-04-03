@@ -6,7 +6,7 @@ You can also contact me on discord, Vick#9262, or on twitter [@thesailorvick](ht
 
 
 ## 🔰 How to use it
-Grab the latest version of [Bizhawk](https://github.com/TASEmulators/BizHawk/releases), the script will only work with 2.6 or above only.
+Grab the latest version of [Bizhawk](https://github.com/TASEmulators/BizHawk/releases), the script will only work with 2.6 or above only.  
 After loading the rom, just drag the lua file into BizHawk window and voilà!
 
 - BizHawk: https://github.com/TASVideos/BizHawk/releases
@@ -14,7 +14,7 @@ After loading the rom, just drag the lua file into BizHawk window and voilà!
 
 
 ## 📦 The Features
-The new 2.0 version has all these feature:
+The new 2.0 version has all these features:
 - Hitbox Viewer!
 - Auto-tech on:
   - Ground splat
