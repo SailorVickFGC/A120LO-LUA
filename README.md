@@ -32,6 +32,7 @@ The new 2.0 version has all these features:
 - History Input
 - Damage / Stun / Meter gained on move
 - Record / replay inputs (2 ways to do it even :P)
+To know what they do or how to use these shiny new features, go to [Mizuumi's Wiki Training mode page](https://wiki.gbl.gg/w/Asuka_120_LimitOver/Training#Enhanced_Training_mode).
 
 ![Bizhawk screenshot of A120LO Lua 2.0](https://media.discordapp.net/attachments/711677036296536154/960267966237257869/EmuHawk_2022-04-03_22.00.00.png?width=720&height=530)
 
