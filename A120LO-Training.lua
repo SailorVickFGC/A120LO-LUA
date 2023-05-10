@@ -7,20 +7,11 @@
 	-- -- -- -- -- --
 
 
-local _SCRIPT_VER = '2.1.0'
+local _SCRIPT_VER = '2.1.1b'
 local _ORIGIN = 'https://github.com/VickGE/A120LO-LUA/blob/master/README.md'
 
 
---	bitzhawk namespaces
-local bizstring = bizstring
-local client = client
-local console = console
-local emu = emu
-local event = event
-local gui = gui
-local joypad = joypad
-local memory = memory
-local userdata = userdata
+-- Config
 
 local COLOR = {	-- https://www.radix-ui.com/docs/colors/palette-composition/the-scales
 	white = 'white',
@@ -35,97 +26,160 @@ local COLOR = {	-- https://www.radix-ui.com/docs/colors/palette-composition/the-
 	crimson = '#FFF65CB6',
 	purple = '#FFAB4ABA',
 }
-local _c = {	-- constants / script setup
-		pxLineH = 19,
-		menuPauseColInvert = true,
-		menuPauseColInvertCenter = true,
-		menu = {	-- { Text, Value: {str, [color]}, [State, Game, Address] }
-			['  '] = {
-				A = {t = 'History', v = {{'OFF'}, {'INPUT', COLOR.green}, {'HIT'}}, s = {'modeHistory'}},
-				B = {t = 'Hitbox Viewer', v = {{'OFF'}, {'ON'}}, s = {'hitboxes'}},
-				C = {t = 'Reset Dmg Stats'},
-				Z = {t = 'Block', v = {{'ON'}, {'1-HIT'}, {'OFF'}}, s = {'modeGuard'}},
-				Y = {t = 'Stun', v = {{'ON'}, {'1-HIT'}, {'OFF'}}, s = {'modeStun'}},
-				X = {t = 'Neutral Stance', v = {{'STAND', COLOR.green}, {'CROUCH', COLOR.lightblue}, {'JUMP', COLOR.yellow}, {'DOUBLE', COLOR.orange}, {'HOP', COLOR.crimson}, {'HIGH', COLOR.purple}}, s = {'modeStance'}},
+
+local _c = {
+	pxLineH = 19,
+	menuPauseColInvert = true,
+	menuPauseColInvertCenter = true,
+	menu = {	-- { Text, Value: {str, [color]}, [State, Game, Address] }
+		['  '] = {
+			A = {t = 'History', v = {{'OFF'}, {'INPUT', COLOR.green}, {'HIT'}}, s = {'modeHistory'}},
+			B = {t = 'Hitbox Viewer', v = {{'OFF'}, {'ON'}}, s = {'hitboxes'}},
+			C = {t = 'Reset Dmg Stats'},
+			Z = {t = 'Block', v = {{'ON'}, {'1-HIT'}, {'OFF'}}, s = {'modeGuard'}},
+			Y = {t = 'Stun', v = {{'ON'}, {'1-HIT'}, {'OFF'}}, s = {'modeStun'}},
+			X = {t = 'Neutral Stance', v = {{'STAND', COLOR.green}, {'CROUCH', COLOR.lightblue}, {'JUMP', COLOR.yellow}, {'DOUBLE', COLOR.orange}, {'HOP', COLOR.crimson}, {'HIGH', COLOR.purple}}, s = {'modeStance'}},
+		},
+		['R+'] = {
+			A = {t = 'Quick Undizzy', v = {{'OFF'}, {'ON'}}, s = {'tech', 'dizzy'}},
+			B = {t = 'Ground/Air Tech', v = {{'OFF'}, {'ON'}}, s = {'tech', 'ground'}},
+			C = {t = 'Wall Slam Tech', v = {{'OFF'}, {'ON'}}, s = {'tech', 'wall'}},
+			Z = {t = 'Wall Slide Tech', v = {{'OFF'}, {'ON'}}, s = {'tech', 'slide'}},
+			Y = {t = 'Throw Tech', v = {{'OFF'}, {'ON'}}, s = {'tech', 'throw'}},
+			X = {t = 'Control P2', v = {{'OFF'}, {'INVERT', COLOR.green}, {'MIME', COLOR.lightblue}, {'MIRROR'}}, s = {'modeInvert'}},
+		},
+		['L+'] = {
+			A = {t = 'P1 HP +Guts (%)', v = {{'100+50', COLOR.green}, {'99 +25'}, {'90 +15'}, {'80 + 5'}, {'70  / ', COLOR.orange}, {'50  / ', COLOR.orange}, {'30 -10', COLOR.red}, {'10 -15', COLOR.red}}, s = {'hpRefill', 'p1', 'mode'}},
+			B = {t = 'P2 HP +Guts (%)', v = {{'100+50', COLOR.green}, {'99 +25'}, {'90 +15'}, {'80 + 5'}, {'70  / ', COLOR.orange}, {'50  / ', COLOR.orange}, {'30 -10', COLOR.red}, {'10 -15', COLOR.red}}, s = {'hpRefill', 'p2', 'mode'}},
+			-- C = {t = 'Input Delay', v = {{'0', COLOR.green}, {'1', COLOR.lightblue}, {'2', COLOR.white}, {'3', COLOR.lightgray}, {'4', COLOR.yellow}, {'5', COLOR.orange}, {'6', COLOR.pink}, {'7', COLOR.crimson}, {'8', COLOR.purple}, {'9', COLOR.red}}, s = {'fInputDelay', 'f'}},
+			C = {t = 'Input Delay', v = {{'0', COLOR.green}, {'2', COLOR.yellow}, {'4', COLOR.orange}, {'6', COLOR.pink}, {'8', COLOR.crimson}, {'10', COLOR.red}, {'SPIKES', COLOR.purple}}, s = {'fInputDelay', 'f'}},
+		},
+	},
+	-- -- Game constants below
+	maxHP = 192,	--NOTE max memory value
+	addr = {
+		g = {	-- game
+				scene = 0x0FFB82,	-- 99: main; 1: VS; 2: ranking; 3: DM; 4: config; 150: ingame
+				modeVS = 0x07C9B6,	-- 0: PvP; 1: COM; 2: auto; 3: DEKU
+				pause = 0x07984A,	--TODO P1 only?
+				timer = 0x0903F2,
+				combo = 0x0873FC,
+				lastCombo = 0x086E12,
+				hitbox1 = 0x0856B0,
+				hitbox2 = 0x090402,	-- both need to be set to 1
 			},
-			['R+'] = {
-				A = {t = 'Quick Undizzy', v = {{'OFF'}, {'ON'}}, s = {'tech', 'dizzy'}},
-				B = {t = 'Ground/Air Tech', v = {{'OFF'}, {'ON'}}, s = {'tech', 'ground'}},
-				C = {t = 'Wall Slam Tech', v = {{'OFF'}, {'ON'}}, s = {'tech', 'wall'}},
-				Z = {t = 'Wall Slide Tech', v = {{'OFF'}, {'ON'}}, s = {'tech', 'slide'}},
-				Y = {t = 'Throw Tech', v = {{'OFF'}, {'ON'}}, s = {'tech', 'throw'}},
-				X = {t = 'Control P2', v = {{'OFF'}, {'INVERT', COLOR.green}, {'MIME', COLOR.lightblue}, {'MIRROR'}}, s = {'modeInvert'}},
+		p1 = {
+				guardMode = 0x08593E,	--TODO
+				sideFacingLeft = 0x086C74,
+				health = 0x086F74,
+				redHealth = 0x086F76,
+				stun = 0x086CF2,
+				timerStun = 0x086CF4,
+				limitStun = 0x086CF8,
+				meter = 0x086F7C,
+				state = 0x0872C2,	--TODO
+				state2 = 0x083EB0,	--TODO
+				stick = 0x086D00,
+				btn = 0x086D04,
 			},
-			['L+'] = {
-				A = {t = 'P1 HP +Guts (%)', v = {{'100+50', COLOR.green}, {'99 +25'}, {'90 +15'}, {'80 + 5'}, {'70  / ', COLOR.orange}, {'50  / ', COLOR.orange}, {'30 -10', COLOR.red}, {'10 -15', COLOR.red}}, s = {'hpRefill', 'p1', 'mode'}},
-				B = {t = 'P2 HP +Guts (%)', v = {{'100+50', COLOR.green}, {'99 +25'}, {'90 +15'}, {'80 + 5'}, {'70  / ', COLOR.orange}, {'50  / ', COLOR.orange}, {'30 -10', COLOR.red}, {'10 -15', COLOR.red}}, s = {'hpRefill', 'p2', 'mode'}},
-				-- C = {t = 'Input Delay', v = {{'0', COLOR.green}, {'1', COLOR.lightblue}, {'2', COLOR.white}, {'3', COLOR.lightgray}, {'4', COLOR.yellow}, {'5', COLOR.orange}, {'6', COLOR.pink}, {'7', COLOR.crimson}, {'8', COLOR.purple}, {'9', COLOR.red}}, s = {'fInputDelay', 'f'}},
-				C = {t = 'Input Delay', v = {{'0', COLOR.green}, {'2', COLOR.yellow}, {'4', COLOR.orange}, {'6', COLOR.pink}, {'8', COLOR.crimson}, {'10', COLOR.red}, {'SPIKES', COLOR.purple}}, s = {'fInputDelay', 'f'}},
+		p2 = {
+				guardMode = 0x08593E,
+				sideFacingLeft = 0x0872C4,
+				health = 0x0875C4,
+				redHealth = 0x0875C6,
+				stun = 0x087342,
+				timerStun = 0x087344,
+				limitStun = 0x087348,
+				meter = 0x0875CC,
+				state = 0x0872C2,
+				state2 = 0x083EB0,
+				stick = 0x087350,
+				btn = 0x087356,
 			},
 		},
-		-- -- Game constants below
-		maxHP = 192,	--NOTE max memory value
-		addr = {
-			g = {	-- game
-					scene = 0x0FFB82,	-- 99: main; 1: VS; 2: ranking; 3: DM; 4: config; 150: ingame
-					modeVS = 0x07C9B6,	-- 0: PvP; 1: COM; 2: auto; 3: DEKU
-					pause = 0x07984A,	--TODO P1 only?
-					timer = 0x0903F2,
-					combo = 0x0873FC,
-					lastCombo = 0x086E12,
-					hitbox1 = 0x0856B0,
-					hitbox2 = 0x090402,	-- both need to be set to 1
-				},
-			p1 = {
-					guardMode = 0x08593E,	--TODO
-					sideFacingLeft = 0x086C74,
-					health = 0x086F74,
-					stun = 0x086CF2,
-					timerStun = 0x086CF4,
-					limitStun = 0x086CF8,
-					meter = 0x086F7C,
-					state = 0x0872C2,	--TODO
-					state2 = 0x083EB0,	--TODO
-					stick = 0x086D00,
-					btn = 0x086D04,
-				},
-			p2 = {
-					guardMode = 0x08593E,
-					sideFacingLeft = 0x0872C4,
-					health = 0x0875C4,
-					stun = 0x087342,
-					timerStun = 0x087344,
-					limitStun = 0x087348,
-					meter = 0x0875CC,
-					state = 0x0872C2,
-					state2 = 0x083EB0,
-					stick = 0x087350,
-					btn = 0x087356,
-				},
-			},
-	}
+}
+
+
+-- Misc setup and compat
+
+local _G, _VERSION = _G, _VERSION
+-- local LUA_VERSION = tonumber( _VERSION:sub(-3) )
+
+local bizstring, client, console, emu, event, gui, joypad, memory, movie, userdata, userdata = bizstring, client, console, emu, event, gui, joypad, memory, movie, userdata, userdata	-- bitzhawk namespaces
+
+if not table.unpack then	-- https://github.com/lunarmodules/lua-compat-5.3/blob/master/compat53/module.lua
+	table.unpack = unpack
+end
+
+
+-- Const
+
+local SCENE = {
+	main = 99,
+	VS = 1,
+	ranking = 2,
+	deathmatch = 3,
+	config = 4,
+	ingame = 150,
+}
+
+local VS_MODE = {
+	pvp = 0,
+	com = 1,
+	auto = 2,
+	deku = 3,
+}
+
+local GUTS = {
+	[0] = 192,
+	[1] = 191,
+	[2] = 172,
+	[3] = 153,
+	[4] = 134,
+	[5] = 96,	-- not actually one of the scaling thresholds, but for convenience it's halfway the main block at 50% max HP
+	[6] = 57,
+	[7] = 19,
+}
+
+local BTN_FLAG = {
+	A =   1,
+	B =   2,
+	X =   4,
+	C =   8,	-- != A+B -> 1+2
+	Y =  16,
+	Z =  32,
+	R =  64,	-- == 2+C+R ; != 2+C -> 8
+	L = 128,	-- does nothing for the game's input reader
+}
+
+
+-- Utils
 
 local bool2str = {[false] = 'False', [true] = 'True', False = 'False', True = 'True', ['false'] = 'False', ['true'] = 'True'}
+
 local int2bool = {[0] = false, [1] = true, [false] = false, [true] = true}
+
 local function tonum (v)
 	if v == false then return 0 end
 	if v == true then return 1 end
 	return tonumber(v)
 end
-local function randomExp (rate)
-	if rate == nil then rate = 1 end
 
-	return -math.log( math.random() ) / rate
+local function strSplit (inputStr, sep)
+	sep = sep or '%s'
+	local t = {}
+	for str in string.gmatch( inputStr, '([^'..sep..']+)' ) do
+		table.insert( t, str )
+	end
+	return t
 end
--- local function randomGeom (prob)
--- 	if prob == nil then prob = 0.6321205588285577 end	-- 1 - math.exp( -1 )
--- 	return math.floor( randomExp( -math.log( 1 - prob ) ) )
--- end
+
 local function lenTable (t)
 	local count = 0
 	for _ in pairs( t ) do count = count + 1 end
 	return count
 end
+
 local function tblCopy (t, deep)
 	if deep == nil then deep = false end
 
@@ -149,6 +203,7 @@ local function tblCopy (t, deep)
 	end
 	return tmp
 end
+
 local function padStart (len, str, char, lenStr)
 	if str == nil then str = '' end
 	if len == nil then len = 0 end
@@ -160,6 +215,7 @@ local function padStart (len, str, char, lenStr)
 
 	return string.rep( char, len - lenStr ) .. str
 end
+
 local function padEnd (len, str, char, lenStr)
 	if str == nil then str = '' end
 	if len == nil then len = 0 end
@@ -178,13 +234,14 @@ local function _tableSerialize (target, k, v, max)
 			local starting = math.max( _lV - max, 0 )
 			for k2, v2 in pairs( v ) do
 				local tmp = tonumber( k2 )
-				if tmp == nil or tmp > starting then
+				if tmp == nil or tmp >= starting then
 					_tableSerialize( target, k .. '.' .. k2, v2, max )
 				end
 			end
 		end
 	end
 end
+
 local function tableSerialize (k, v, max)
 	max = tonum( max ) or 0
 
@@ -193,79 +250,21 @@ local function tableSerialize (k, v, max)
 	return tmp
 end
 
+local function randomExp (rate)
+	if rate == nil then rate = 1 end
 
-local SCENE = {
-	main = 99,
-	VS = 1,
-	ranking = 2,
-	deathmatch = 3,
-	config = 4,
-	ingame = 150,
-}
-local VS_MODE = {
-	pvp = 0,
-	com = 1,
-	auto = 2,
-	deku = 3,
-}
-
-local GUTS = {
-	[0] = 192,
-	[1] = 191,
-	[2] = 172,
-	[3] = 153,
-	[4] = 134,
-	[5] = 96,	-- not actually a guts threshold, but halfway the main block at 50% max HP for conveniente
-	[6] = 57,
-	[7] = 19,
-}
-local BTN_FLAG = {
-	A =   1,
-	B =   2,
-	X =   4,
-	C =   8,	-- != A+B -> 1+2
-	Y =  16,
-	Z =  32,
-	R =  64,	-- == 2+C+R ; !=2+C -> 8
-	L = 128,	-- does nothing for the game's input reader
-}
-
-local function bToNumpad (b)
-	local s = 0
-	-- row
-	if b.Left then s = s + 1
-	elseif b.Right then s = s + 3
-	else s = s + 2 end
-	-- col
-	if b.Up then s = 3 * 2 + s
-	elseif b.Down then s = s
-	else s = 3 * 1 + s end
-	-- neutral
-	if s == 5 then s = 0 end
-	return s
-end
-local function getPadState (p)
-	local tmpB = joypad.getimmediate( p )
-	local flag = 0
-	for k, v in pairs( tmpB ) do
-		if v and BTN_FLAG[k] then
-			flag = flag + BTN_FLAG[k]
-		end
-	end
-	return {b = tmpB, s = bToNumpad( tmpB ), fB = flag }
-end
-local function getGameState ()
-	local tmp = {}
-	for cat, set in pairs( _c.addr ) do
-		tmp[cat] = {}
-		for key, val in pairs( set ) do
-			tmp[cat][key] = memory.readbyte( val )
-		end
-	end
-	return tmp
+	return -math.log( math.random() ) / rate
 end
 
-local _s = {	-- state
+-- local function randomGeom (prob)
+-- 	if prob == nil then prob = 0.6321205588285577 end	-- 1 - math.exp( -1 )
+-- 	return math.floor( randomExp( -math.log( 1 - prob ) ) )
+-- end
+
+
+-- State
+
+local _s = {
 	f = 0,	-- scrip running frame counter
 	modeHistory = 1,	-- 0: off; 1: inputs; 2: hit data
 	prntColCurr = 'left',
@@ -322,58 +321,96 @@ local _s = {	-- state
 	_prntDmgP1 = {{v = '', t = 0, tt = ''}},
 	g = {},
 }
-local _sPads = {}	-- inputs
-for _ = 1, 20 do	--NOTE lmao as long as it works
-	table.insert( _s.g, getGameState() )
-	table.insert( _sPads, {p1 = getPadState( 1 ), p2 = getPadState( 2 )} )
-end
-local _lSPads = #_sPads
-local sPads = _sPads[_lSPads]	-- shortcut to state of current input
-local s2Pads = sPads	-- shortcut to state of previous input
 local _lS_g = #_s.g
-local s = _s.g[_lS_g]	-- shortcut to state of current frame
-local s2 = s	-- shortcut to state of previous frame
+
+local _sPads = {}	-- inputs
+local _lSPads = #_sPads
+
+-- Shortcuts
+local sPads = _sPads[_lSPads]	-- current input
+local s2Pads = sPads	-- previous input
+local s = _s.g[_lS_g]	-- current frame
+local s2 = s	-- previous frame
+
 local sNew = {	-- temp object to carry changes for application from frameStart to frameEnd
 	g = {},
 	p1 = {},
 	p2 = {},
 }
 
-local function strSplit (inputStr, sep)
-	sep = sep or '%s'
-	local t = {}
-	for str in string.gmatch( inputStr, '([^'..sep..']+)' ) do
-		table.insert( t, str )
-	end
-	return t
+
+-- Misc procs
+
+local function bToNumpad (b)
+	local str = 0
+	-- row
+	if b.Left then str = str + 1
+	elseif b.Right then str = str + 3
+	else str = str + 2 end
+	-- col
+	if b.Up then str = 3 * 2 + str
+	elseif b.Down then str = str
+	else str = 3 * 1 + str end
+	-- neutral
+	if str == 5 then str = 0 end
+	return str
 end
+
+local function getPadState (p)
+	local tmpB = joypad.getimmediate( p )
+	local flag = 0
+	for k, v in pairs( tmpB ) do
+		if v and BTN_FLAG[k] then
+			flag = flag + BTN_FLAG[k]
+		end
+	end
+	return {b = tmpB, s = bToNumpad( tmpB ), fB = flag }
+end
+
+local function getGameState ()
+	local tmp = {}
+	for cat, set in pairs( _c.addr ) do
+		tmp[cat] = {}
+		for k, v in pairs( set ) do
+			tmp[cat][k] = memory.readbyte( v )
+		end
+	end
+	return tmp
+end
+
 local function setScriptState ()
-	for k, v in pairs( tableSerialize( '_s', _s, 0 ) ) do
+	for k, v in pairs( tableSerialize( '_s', _s ) ) do
 		userdata.set( k, v )
 	end
 end
+
 local function getScriptState ()
-	for k, _ in pairs( tableSerialize( '_s', _s, 0 ) ) do
-		if not ( k == '_s.modeHistory'	--TODO proper config
+	local mov = movie.mode()
+	for k, _ in pairs( tableSerialize( '_s', _s ) ) do
+		if mov ~= 'INACTIVE' or not (	-- persist new values through savestate load
+			k == '_s.modeHistory'	--TODO proper config
 			or k == '_s.hitboxes'
 			or k == '_s.fInputDelay.f'
-			or string.find( k, '_s.p2Record.', 1, true )
+			-- or string.find( k, '_s.p2Record.', 1, true )
 			or string.find( k, '_s.hpRefill.', 1, true )
 			or string.find( k, '_s.fInputDelay.f', 1, true )
 		) then
 			local valOld = userdata.get( k )
 			local tmp = {_s = _s}
-
 			local path = strSplit( k, '.' )
 			local _lPath = #path
-			local key = path[_lPath]
-			for i, k2 in ipairs( path ) do
-				if i < _lPath then
-					tmp = tmp[k2]	--FIXME broken with arrays
+
+			for i, _k2 in ipairs( path ) do
+				if i >= _lPath then break end
+				local k2 = tonumber( _k2 ) or _k2
+
+				if tmp[k2] == nil then
+					tmp[k2] = {}
 				end
+				tmp = tmp[k2]
 			end
 			if valOld ~= nil then
-				tmp[key] = valOld
+				tmp[path[_lPath]] = valOld
 			end
 		end
 	end
@@ -409,19 +446,9 @@ local function clientUpdateCache ()
 	cClient2.isChanged = diff
 end
 
-local PAD_NULL = {}
-for key, _ in pairs( sPads.p1.b ) do
-	if key ~= 'Start' and key ~= 'L' then
-		PAD_NULL[key] = false
-	end
-end
-local _padsNew = {p1 = {}, p2 = {}}
-local function setPad ( btns, p )
-	for key, val in pairs( btns ) do
-		_padsNew['p' .. p][key] = val
-	end
-end
 local function drawRect ( x, y, width, height, bg, outline )
+	-- if not ( s.g.scene == SCENE.ingame and s.g.pause == 0 ) and _s.f % 120 > 0 then return end	--TODO
+
 	if outline == nil then outline = bg end
 
 	local x2 = x + width
@@ -433,6 +460,8 @@ local function drawRect ( x, y, width, height, bg, outline )
 	gui.drawBox( x, y, x2, y2, outline, bg, 'client' )
 end
 local function prnt (str, color, col, lenStr)
+	-- if not ( s.g.scene == SCENE.ingame and s.g.pause == 0 ) and _s.f % 120 > 0 then return end	--TODO
+
 	if str == nil then str = '' end
 	if col == nil then col = _s.prntColCurr end
 
@@ -463,6 +492,37 @@ local function prntRewind (lN, col)
 	_s.lineCurr[col] = _s.lineCurr[col] - lN
 end
 
+
+--	Init
+
+for _ = 1, 20 do	--NOTE lmao as long as it works
+	table.insert( _s.g, getGameState() )
+	table.insert( _sPads, {p1 = getPadState( 1 ), p2 = getPadState( 2 )} )
+end
+_lSPads = #_sPads
+_lS_g = #_s.g
+
+-- Update shortcuts
+sPads = _sPads[_lSPads]	-- current input
+s2Pads = sPads	-- previous input
+s = _s.g[_lS_g]	-- current frame
+s2 = s	-- previous frame
+
+
+-- Game procs
+
+local PAD_NULL = {}	--TODO hardcode and move up with other consts
+for key, _ in pairs( sPads.p1.b ) do
+	if key ~= 'Start' and key ~= 'L' then
+		PAD_NULL[key] = false
+	end
+end
+local _padsNew = {p1 = {}, p2 = {}}
+local function setPad ( btns, p )
+	for b, v in pairs( btns ) do
+		_padsNew['p' .. p][b] = v
+	end
+end
 
 local function prntStateDummy ()
 	local P2State = s[_s.p2].state2
@@ -502,6 +562,7 @@ local function refillHP ()
 			or _s.modeStun == 1 and ( s2[p].state ~= 0 or s2[p].state2 ~= 15 )
 		) then
 			memory.writebyte( _c.addr[p].health, GUTS[_s.hpRefill[p].mode] )
+			memory.writebyte( _c.addr[p].redHealth, GUTS[_s.hpRefill[p].mode] )
 			if _s.modeStun ~= 1 then
 				memory.writebyte( _c.addr[p].stun, 0 )
 				memory.writebyte( _c.addr[p].timerStun, 0 )
@@ -535,14 +596,14 @@ local function fmtStick (n)
 end
 local function fmtButtons (bf)
 	local str = ''
-	if bit.band( BTN_FLAG.A, bf ) ~= 0 then str = str .. 'A' else str = str .. ' ' end
-	if bit.band( BTN_FLAG.B, bf ) ~= 0 then str = str .. 'B' else str = str .. ' ' end
-	if bit.band( BTN_FLAG.C, bf ) ~= 0 then str = str .. 'C' else str = str .. ' ' end
-	if bit.band( BTN_FLAG.Z, bf ) ~= 0 then str = str .. 'Z' else str = str .. ' ' end
-	if bit.band( BTN_FLAG.Y, bf ) ~= 0 then str = str .. 'Y' else str = str .. ' ' end
-	if bit.band( BTN_FLAG.X, bf ) ~= 0 then str = str .. 'X' else str = str .. ' ' end
-	-- if bit.band( BTN_FLAG.L, bf ) ~= 0 then str = str .. 'L' else str = str .. ' ' end
-	if bit.band( BTN_FLAG.R, bf ) ~= 0 then str = str .. 'R' else str = str .. ' ' end
+	if BTN_FLAG.A & bf ~= 0 then str = str .. 'A' else str = str .. ' ' end
+	if BTN_FLAG.B & bf ~= 0 then str = str .. 'B' else str = str .. ' ' end
+	if BTN_FLAG.C & bf ~= 0 then str = str .. 'C' else str = str .. ' ' end
+	if BTN_FLAG.Z & bf ~= 0 then str = str .. 'Z' else str = str .. ' ' end
+	if BTN_FLAG.Y & bf ~= 0 then str = str .. 'Y' else str = str .. ' ' end
+	if BTN_FLAG.X & bf ~= 0 then str = str .. 'X' else str = str .. ' ' end
+	-- if BTN_FLAG.L & bf ~= 0 then str = str .. 'L' else str = str .. ' ' end
+	if BTN_FLAG.R & bf ~= 0 then str = str .. 'R' else str = str .. ' ' end
 	return str
 end
 local function historyInput ()	-- _strHistorySepDrop inserted by historyHit()
@@ -656,20 +717,22 @@ local function p2ToDummy ()
 		local dirTech = ({'Left', 'Right'})[s[_s.p1].sideFacingLeft + 1]
 
 		local tmp = {}
+
 		local tech = true
+		local techB = true
 		if st > 18 and st < 23 or st == 25 then	-- 22 ground-slam; 21 and 22 should be too late but don't hurt, 19 too early
 			if _s.tech.ground then
 				if _s.f % 2 == _s.offsQuickRec then tmp.Up = true end
 			else tech = false end
 		elseif st == 18 then	-- happens often after generic hitstun
-			tech = false
+			techB = false
 			if _s.tech.wall then
 				if _s.f % 2 == _s.offsQuickRec then tmp[dirTech] = true end
 			end
 		elseif s[_s.p2].state == 13 and s[_s.p2].state2 == 8 and _s.g[_lS_g - 9][_s.p2].state2 == 8 then	-- grab
 			if _s.tech.throw then
 				-- setPad( {[dirTech] = true}, 2 )	--NOTE you can tech with no direction if facing right	--TODO
-				-- tech = false	--DEBUG
+				-- techB = false	--DEBUG
 			else tech = false end
 		elseif st == 26 then	-- air throw
 			if _s.tech.throw then
@@ -678,24 +741,33 @@ local function p2ToDummy ()
 		elseif st == 17 then	-- generic hitstun
 			if _s.tech.slide and s[_s.p1].sideFacingLeft == s[_s.p2].sideFacingLeft then
 				if _s.f % 2 == _s.offsQuickRec then tmp[dirTech] = true end
-			else tech = false end
+			end
 		elseif st == 15 then	-- dizzy
-			tech = false
+			techB = false
 			if _s.tech.dizzy then
 				if _s.f % 2 == _s.offsQuickRec then
-					tmp[dirTech] = true
+					tmp.Left = true
 				else
 					tmp.Down = true
 				end
-			end
+			else tech = false end
 		else
 			tech = false
 			_s.offsQuickRec = -1
 		end
 		if tech then
-			if _s.f % 2 == _s.offsQuickRec then tmp.B = true end
+			if techB then
+				if _s.f % 2 == _s.offsQuickRec then tmp.B = true end
+			end
+
+			if _s.p1 == 'p1' then
+				setPad( PAD_NULL, 2 )
+				setPad( tmp, 2 )
+			else
+				setPad( PAD_NULL, 1 )
+				setPad( tmp, 1 )
+			end
 		end
-		if _s.p1 == 'p1' then setPad( tmp, 2 ) else setPad( tmp, 1 ) end
 	end
 end
 
@@ -736,18 +808,18 @@ local function p2Control ()
 	else
 		if s2.g.pause == 0 and s2Pads.p1.b.Start and not sPads.p1.b.Start then
 			local tmp = {}
-			for key, val in pairs( sPads.p1.b ) do
-				if val and key ~= 'Start' and key ~= 'L' then
-					tmp[key] = true
+			for b, v in pairs( sPads.p1.b ) do
+				if v and b ~= 'Start' and b ~= 'L' then
+					tmp[b] = true
 				end
 			end
 			r.dekuMash = tmp
 		end
 		if _s.modeInvert > 0 or r.frameUpTo == -1 then	-- if manually inevrted or REC
 			local tmp = {}
-			for key, val in pairs( sPads.p1.b ) do
-				if key ~= 'Start' and key ~= 'L' then
-					tmp[key] = tmp[key] or val
+			for b, v in pairs( sPads.p1.b ) do
+				if b ~= 'Start' and b ~= 'L' then
+					tmp[b] = tmp[b] or v
 				end
 			end
 			if _s.modeInvert == 3 and r.frameUpTo ~= -1 then
@@ -792,13 +864,13 @@ local function p2Control ()
 				if _s.p1 == 'p1' then setPad( tmp, 2 ) else setPad( tmp, 1 ) end
 			elseif lenTable( r.dekuMash ) > 0 then
 				local tmp = {}
-				for key, val in pairs( r.dekuMash ) do
-					if string.len( key ) > 1 then
-						tmp[key] = val
+				for b, v in pairs( r.dekuMash ) do
+					if string.len( b ) > 1 then
+						tmp[b] = v
 					elseif _s.f % 2 > 0 then
-						tmp[key] = val
+						tmp[b] = v
 					else
-						tmp[key] = not val
+						tmp[b] = not v
 					end
 				end
 				if _s.p1 == 'p1' then setPad( tmp, 2 ) else setPad( tmp, 1 ) end
@@ -892,7 +964,7 @@ local function prntMenu ()
 	prnt()
 
 	for _, v in ipairs( cMenu ) do
-		prnt( unpack( v ) )
+		prnt( table.unpack( v ) )
 	end
 
 	prntRewind()
@@ -1009,7 +1081,7 @@ local function ctlSettings ()
 						r.frameUpTo = _s.f
 						r.fRewind = r.frameUpTo - r.fRewind
 					else
-						if r.running == 0 and r.frameUpTo > 0 then	--start playback
+						if r.running == 0 and r.frameUpTo > 0 then	-- start playback
 							r.running = _s.f
 						else	-- stop playback
 							r.running = 0
@@ -1045,8 +1117,8 @@ local function prntReplay ()
 
 	if r.triggerHeld then
 		if s.g.pause == 0 then
-			for i, v in ipairs( cPrntReplay.held ) do
-				prnt( unpack( v ) )
+			for _, v in ipairs( cPrntReplay.held ) do
+				prnt( table.unpack( v ) )
 			end
 		end
 	elseif r.frameUpTo == -1 then
@@ -1063,6 +1135,8 @@ local function prntReplay ()
 	end
 end
 
+
+-- Main
 
 local function frameStart ()
 
@@ -1093,8 +1167,8 @@ local function frameStart ()
 		historyInput()
 	end
 	ctlSettings()
-	p2ToDummy()
 	p2Control()
+	p2ToDummy()	--NOTE must be last p2 override for teching to take priority
 	for p, inputs in pairs( sPads ) do
 		for b, _ in pairs( inputs.b ) do
 			if _padsNew[p][b] ~= nil then
@@ -1124,7 +1198,9 @@ local function frameStart ()
 	local tmpPads = {p1 = {}, p2 = {}}
 	for p, inputs in pairs( _sPads[_lSPads - tmpDelay] ) do
 		for b, v in pairs( inputs.b ) do
-			tmpPads[p][b] = v
+			if b ~= 'Start' and b ~= 'L' then
+				tmpPads[p][b] = v
+			end
 		end
 	end
 	joypad.set( tmpPads.p1, 1 )
@@ -1183,10 +1259,9 @@ local function frameEnd ()
 		end
 	end
 	if s.g.scene == SCENE.main or s.g.scene == SCENE.VS then
-		prntLeft( '          Pick "VS GAME" & enter 2 Players mode ( NOT DEKU! )' )
-
-		prntRight()
-		prntLeft( "           To start the match you can control P2's cursor while holding [L]          " )
+		_s.prntColCurr = 'left'
+		prnt( '          Pick "VS GAME" & enter 2 Players mode ( NOT DEKU! )' )
+		prnt( "           To start the match you can control P2's cursor while holding [L]          " )
 	elseif s.g.scene == SCENE.ingame then
 		_s.prntColCurr = 'left'
 		if _c.menuPauseColInvert and not _c.menuPauseColInvertCenter and s.g.pause == 1 then _s.prntColCurr = 'right' end
@@ -1225,6 +1300,7 @@ local function frameEnd ()
 	--NOTE cleanup
 	joypad.set( {}, 1 )
 	joypad.set( {}, 2 )
+
 end
 local function saveState ()
 
@@ -1250,15 +1326,19 @@ local function luaCleanup ()
 
 end
 
-console.log( '' )
-console.log( '' )
-console.log( '- A120LO SCRIPT LOADED' )
+
+-- Start
+
+console.log( '\n\n- A120LO SCRIPT LOADED' )
 luaCleanup()
 loadState()
+setScriptState()
 
 event.onframestart( frameStart, 'ALO120T_frameStart' )
 event.onframeend( frameEnd, 'ALO120T_frameEnd' )
 event.onsavestate( saveState, 'ALO120T_saveState' )
 event.onloadstate( loadState, 'ALO120T_loadState' )
 event.onexit( luaCleanup, 'ALO120T_exit' )
-while true do emu.frameadvance() end
+while true do
+	emu.frameadvance()
+end
